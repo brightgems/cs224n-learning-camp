@@ -36,7 +36,6 @@ def sigmoid_grad(s):
 
     ### YOUR CODE HERE
     ds = s * (1-s)    
-    import pdb ; pdb.set_trace()
     ### END YOUR CODE
 
     return ds
