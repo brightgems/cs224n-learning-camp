@@ -25,11 +25,10 @@ def forward_backward_prop(X, labels, params, dimensions):
     dimensions -- A tuple of input dimension, number of hidden units
                   and output dimension
     """
-
     # Unpack network parameters (do not modify)
     ofs = 0
     Dx, H, Dy = (dimensions[0], dimensions[1], dimensions[2])
-
+    
     W1 = np.reshape(params[ofs:ofs + Dx * H], (Dx, H))
     ofs += Dx * H
     b1 = np.reshape(params[ofs:ofs + H], (1, H))
@@ -40,20 +39,21 @@ def forward_backward_prop(X, labels, params, dimensions):
 
     # Note: compute cost based on `sum` not `mean`.
     # YOUR CODE HERE: forward propagation
+    M = X.shape[0]
     s2 = np.dot(X, W1) + b1
     z2 = sigmoid(s2)
     s3 = np.dot(z2, W2) + b2
     z3 = softmax(s3)
-    cost = np.sum(-labels * np.log(z3) - (1-labels) * np.log(1-z3))
+    cost = -np.sum(labels * np.log(z3))
     
     # END YOUR CODE
-    N = len(X)
     # YOUR CODE HERE: backward propagation
-    gradW2 = np.dot(np.transpose(z3 - labels), z2)
-    gradb2 = np.dot(np.transpose(z3 - labels), np.ones(N))
-    import pdb ; pdb.set_trace()
-    gradW1 = np.sum((z3 - labels) * W2 * sigmoid_grad(z2) * X, axis=1)
-    gradb1 = np.sum((z3 - labels) * W2 * sigmoid_grad(z2), axis=1)
+    gradS3 = z3 - labels
+    gradW2 = np.dot(z2.T, gradS3)
+    gradb2 = np.dot(np.atleast_2d(np.ones(M)), gradS3)
+    gradZ2 = np.dot(gradS3, W2.T) # equal to gradS3.dot(W2.T)
+    gradW1 = np.dot(X.T, sigmoid_grad(z2) * gradZ2)
+    gradb1 = np.dot(np.atleast_2d(np.ones(M)), sigmoid_grad(z2) * gradZ2)
 
     # END YOUR CODE
 

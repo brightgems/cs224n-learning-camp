@@ -1,4 +1,4 @@
-# 深度学习之自然语言处理斯坦福大学CS224n课程集训营
+﻿# 深度学习之自然语言处理斯坦福大学CS224n课程集训营
 
 ## 课程资料
 1. [课程主页](https://web.stanford.edu/class/cs224n/)  
@@ -261,3 +261,6 @@
 - **论文笔记：**[图像对话](http://www.hankcs.com/nlp/cs224n-visual-dialog.html)
  2. 比赛复盘  
  3. 课程总结 
+
+## 最新论文阅读
+https://github.com/thunlp/RCPapers
