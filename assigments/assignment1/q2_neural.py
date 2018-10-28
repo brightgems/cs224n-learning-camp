@@ -26,11 +26,11 @@ def forward_backward_prop(X, labels, params, dimensions):
                   and output dimension
     """
 
-    ### Unpack network parameters (do not modify)
+    # Unpack network parameters (do not modify)
     ofs = 0
     Dx, H, Dy = (dimensions[0], dimensions[1], dimensions[2])
 
-    W1 = np.reshape(params[ofs:ofs+ Dx * H], (Dx, H))
+    W1 = np.reshape(params[ofs:ofs + Dx * H], (Dx, H))
     ofs += Dx * H
     b1 = np.reshape(params[ofs:ofs + H], (1, H))
     ofs += H
@@ -39,17 +39,27 @@ def forward_backward_prop(X, labels, params, dimensions):
     b2 = np.reshape(params[ofs:ofs + Dy], (1, Dy))
 
     # Note: compute cost based on `sum` not `mean`.
-    ### YOUR CODE HERE: forward propagation
-    raise NotImplementedError
-    ### END YOUR CODE
+    # YOUR CODE HERE: forward propagation
+    s2 = np.dot(X, W1) + b1
+    z2 = sigmoid(s2)
+    s3 = np.dot(z2, W2) + b2
+    z3 = softmax(s3)
+    cost = np.sum(-labels * np.log(z3) - (1-labels) * np.log(1-z3))
+    
+    # END YOUR CODE
+    N = len(X)
+    # YOUR CODE HERE: backward propagation
+    gradW2 = np.dot(np.transpose(z3 - labels), z2)
+    gradb2 = np.dot(np.transpose(z3 - labels), np.ones(N))
+    import pdb ; pdb.set_trace()
+    gradW1 = np.sum((z3 - labels) * W2 * sigmoid_grad(z2) * X, axis=1)
+    gradb1 = np.sum((z3 - labels) * W2 * sigmoid_grad(z2), axis=1)
 
-    ### YOUR CODE HERE: backward propagation
-    raise NotImplementedError
-    ### END YOUR CODE
+    # END YOUR CODE
 
-    ### Stack gradients (do not modify)
+    # Stack gradients (do not modify)
     grad = np.concatenate((gradW1.flatten(), gradb1.flatten(),
-        gradW2.flatten(), gradb2.flatten()))
+                           gradW2.flatten(), gradb2.flatten()))
 
     return cost, grad
 
@@ -66,13 +76,13 @@ def sanity_check():
     data = np.random.randn(N, dimensions[0])   # each row will be a datum
     labels = np.zeros((N, dimensions[2]))
     for i in xrange(N):
-        labels[i, random.randint(0,dimensions[2]-1)] = 1
+        labels[i, random.randint(0, dimensions[2] - 1)] = 1
 
     params = np.random.randn((dimensions[0] + 1) * dimensions[1] + (
         dimensions[1] + 1) * dimensions[2], )
 
     gradcheck_naive(lambda params:
-        forward_backward_prop(data, labels, params, dimensions), params)
+                    forward_backward_prop(data, labels, params, dimensions), params)
 
 
 def your_sanity_checks():
@@ -83,9 +93,9 @@ def your_sanity_checks():
     your additional tests be graded.
     """
     print "Running your sanity checks..."
-    ### YOUR CODE HERE
-    raise NotImplementedError
-    ### END YOUR CODE
+    # YOUR CODE HERE
+
+    # END YOUR CODE
 
 
 if __name__ == "__main__":

@@ -34,6 +34,7 @@ def softmax(x):
         shiftx = x - np.reshape(np.max(x, axis=1), (-1, 1))
         x_exp = np.exp(shiftx)
         sum_x_exp = np.sum(x_exp, axis=1)
+        sum_x_exp = np.reshape(sum_x_exp, (-1,1))
         x = x_exp/ sum_x_exp
         ### END YOUR CODE
     else:

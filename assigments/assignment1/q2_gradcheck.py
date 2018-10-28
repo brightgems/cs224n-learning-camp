@@ -37,9 +37,9 @@ def gradcheck_naive(f, x):
         # to test cost functions with built in randomness later.
 
         ### YOUR CODE HERE:
-        raise NotImplementedError
+        numgrad = (f(x[ix]+h)[0] - f(x[ix]-h)[0])/ (2*h)
+        # import pdb ; pdb.set_trace()
         ### END YOUR CODE
-
         # Compare gradients
         reldiff = abs(numgrad - grad[ix]) / max(1, abs(numgrad), abs(grad[ix]))
         if reldiff > 1e-5:
@@ -76,7 +76,7 @@ def your_sanity_checks():
     """
     print "Running your sanity checks..."
     ### YOUR CODE HERE
-    raise NotImplementedError
+    
     ### END YOUR CODE
 
 
