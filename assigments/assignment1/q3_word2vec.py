@@ -6,6 +6,7 @@ import random
 from q1_softmax import softmax
 from q2_gradcheck import gradcheck_naive
 from q2_sigmoid import sigmoid, sigmoid_grad
+from sklearn.preprocessing import Normalizer
 
 def normalizeRows(x):
     """ Row normalization function
@@ -15,7 +16,9 @@ def normalizeRows(x):
     """
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    # x = x/ (np.sum(x**2, axis=0) ** .5)
+    nl = Normalizer()
+    x =np.fit_transform(x)
     ### END YOUR CODE
 
     return x
