@@ -49,9 +49,10 @@ def getSentenceFeatures(tokens, wordVectors, sentence):
     sentVector = np.zeros((wordVectors.shape[1],))
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    assert len(tokens)==wordVectors.shape[0]
+    wordVectors_idx = [tokens[w] for w in sentence]
+    sentVector = np.mean(wordVectors[wordVectors_idx],axis=0)
     ### END YOUR CODE
-
     assert sentVector.shape == (wordVectors.shape[1],)
     return sentVector
 
@@ -63,7 +64,7 @@ def getRegularizationValues():
     """
     values = None   # Assign a list of floats in the block below
     ### YOUR CODE HERE
-    raise NotImplementedError
+    values = np.linspace(0.01, 20, 10)
     ### END YOUR CODE
     return sorted(values)
 
@@ -89,7 +90,9 @@ def chooseBestModel(results):
     bestResult = None
 
     ### YOUR CODE HERE
-    raise NotImplementedError
+    test_scores = [r['test'] for r in results]
+    best_idx = np.argmax(test_scores)
+    bestResult = results[best_idx]
     ### END YOUR CODE
 
     return bestResult
@@ -151,7 +154,7 @@ def main(args):
     dataset = StanfordSentiment()
     tokens = dataset.tokens()
     nWords = len(tokens)
-
+    print 'number of words:%d'%nWords
     if args.yourvectors:
         _, wordVectors, _ = load_saved_params()
         wordVectors = np.concatenate(
@@ -164,6 +167,7 @@ def main(args):
     # Load the train set
     trainset = dataset.getTrainSentences()
     nTrain = len(trainset)
+    print 'number of sentense:%d' % nTrain
     trainFeatures = np.zeros((nTrain, dimVectors))
     trainLabels = np.zeros((nTrain,), dtype=np.int32)
     for i in xrange(nTrain):

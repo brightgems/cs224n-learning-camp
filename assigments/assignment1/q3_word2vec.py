@@ -65,7 +65,6 @@ def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
     score = np.dot(outputVectors, predicted)  # (N, )
     prob = softmax(score)  # (N, )
     cost = - np.log(prob[target])  # 1,
-
     # score (N x 1)= outputVectors (N x D) x predicted (D x 1)
     # doutputVectors = dscore (N x 1) x predicted^T (1 x D)
     dscore = prob - np.eye(num)[target]  # (N, )
@@ -108,63 +107,62 @@ def negSamplingCostAndGradient(predicted, target, outputVectors, dataset,
     indices.extend(getNegativeSamples(target, dataset, K))
 
     ### YOUR CODE HERE
-    # u = outputVectors[indices, :]  # (K+1, D)
-    # mask = - np.ones(len(indices))
-    # mask[0] = 1 # 1st word is positive sample, others are negative samples
-    # score = mask * np.dot(u, predicted)
-    # prob = sigmoid(score)  # (K+1, )
-    # cost = - np.sum(np.log(prob))
+    u = outputVectors[indices, :]  # (K+1, D)
+    mask = - np.ones(len(indices))
+    mask[0] = 1 # 1st word is positive sample, others are negative samples
+    score = mask * np.dot(u, predicted)
+    prob = sigmoid(score)  # (K+1, )
+    cost = - np.sum(np.log(prob))
 
-    # # back propagation
-    # dprob = - 1.0 / prob
-    # dscore = mask * sigmoid_grad(dprob)
-    # du = np.outer(dscore, predicted)  # (K+1, D)
-    # dv = np.dot(u.T, dscore)
-    # grad = np.zeros_like(outputVectors)
-    # for i, index in enumerate(indices):
-    #     grad[index] += du[i]
-    # gradPred = dv
+    # back propagation
+    dscore = prob*mask - mask
+    du = np.outer(dscore, predicted)  # (K+1, D)
+    dv = np.dot(u.T, dscore) # (1,D)
+    grad = np.zeros_like(outputVectors)
+    for i, index in enumerate(indices):
+        grad[index] += du[i]
+    gradPred = dv
 
-    predicted_orig_shape = predicted.shape
-    outputVectors_orig_shape = outputVectors.shape
+    # predicted_orig_shape = predicted.shape
+    # outputVectors_orig_shape = outputVectors.shape
 
 
-    # STEP 0: first let's make the notations consitent with the course and written assignments
-    # let D=dimension of hidden layer, |V|=number of tokens in outputvectors, N=number of negative words
-    V_c = predicted.reshape(-1, 1)  # the input vector of predicted word --> D x 1
-    U = outputVectors.reshape(-1, V_c.shape[0])  # ALL the output vectors --> |V| x D
-    U_o = U[target].reshape(1, -1)  # the output vector of predicted word --> 1 x D
-    U_negs = U[indices[1:]] # --> N x D
-    # -----
+    # # STEP 0: first let's make the notations consitent with the course and written assignments
+    # # let D=dimension of hidden layer, |V|=number of tokens in outputvectors, N=number of negative words
+    # V_c = predicted.reshape(-1, 1)  # the input vector of predicted word --> D x 1
+    # U = outputVectors.reshape(-1, V_c.shape[0])  # ALL the output vectors --> |V| x D
+    # U_o = U[target].reshape(1, -1)  # the output vector of predicted word --> 1 x D
+    # U_negs = U[indices[1:]] # --> N x D
+    # # -----
 
-    # STEP 1: since the sigmoids of target & all negative samples is needed many times we'll compute and save them
-    # Let get the scores first: positive for the target word and negative for the negative word
-    targetword_and_negwords_scores = -1 * U[indices, :].dot(V_c) #--> N+1 x 1
-    targetword_and_negwords_scores[0] = -1 * targetword_and_negwords_scores[0]
-    targetword_and_negwords_sigmoids = sigmoid(targetword_and_negwords_scores) #--> N+1 x 1
-    del targetword_and_negwords_scores
-    target_sigmoid = targetword_and_negwords_sigmoids[0] #--> 1 x 1, scalar
-    neg_sigmoids = targetword_and_negwords_sigmoids[1:] #--> N x 1
-    # -----
+    # # STEP 1: since the sigmoids of target & all negative samples is needed many times we'll compute and save them
+    # # Let get the scores first: positive for the target word and negative for the negative word
+    # targetword_and_negwords_scores = -1 * U[indices, :].dot(V_c) #--> N+1 x 1
+    # targetword_and_negwords_scores[0] = -1 * targetword_and_negwords_scores[0]
+    # targetword_and_negwords_sigmoids = sigmoid(targetword_and_negwords_scores) #--> N+1 x 1
+    # del targetword_and_negwords_scores
+    # target_sigmoid = targetword_and_negwords_sigmoids[0] #--> 1 x 1, scalar
+    # neg_sigmoids = targetword_and_negwords_sigmoids[1:] #--> N x 1
+    # # -----
 
-    # STEP 2: cost = -log(target_word_sigmoid) - sum( neg_words_sigmoids)
-    cost = -1.*np.sum(np.log(targetword_and_negwords_sigmoids))
-    cost = np.asscalar(cost)
-    # -----
+    # # STEP 2: cost = -log(target_word_sigmoid) - sum( neg_words_sigmoids)
+    # cost = -1.*np.sum(np.log(targetword_and_negwords_sigmoids))
+    # cost = np.asscalar(cost)
+    # # -----
 
-    # STEP 3: gradPed = grad_Cost__wrt__V_c
-    gradPred = (target_sigmoid -1.) * U_o + (1. - neg_sigmoids).T.dot(U_negs) #--> 1 x D
-    gradPred = gradPred.reshape(predicted_orig_shape)
-    # -----
+    # # STEP 3: gradPed = grad_Cost__wrt__V_c
+    # gradPred = (target_sigmoid -1.) * U_o + (1. - neg_sigmoids).T.dot(U_negs) #--> 1 x D
+    # gradPred = gradPred.reshape(predicted_orig_shape)
+    # # -----
 
-    # STEP 4: grad = grad_Cost_wrt_negs_and_target_words_outputvectors, gradient of not(target or negs) are zero
-    grad = np.zeros(U.shape) #--> |V| x D
-    grad_target_and_negs = (1. - targetword_and_negwords_sigmoids).dot(V_c.T) #--> N+1 x D
-    # we negate the grad for the target word as  we found in the formula
-    grad_target_and_negs[0] *= -1
-    for idx, global_idx in enumerate(indices):
-        grad[global_idx, :] += grad_target_and_negs[idx, :]
-    grad = grad.reshape(outputVectors_orig_shape)
+    # # STEP 4: grad = grad_Cost_wrt_negs_and_target_words_outputvectors, gradient of not(target or negs) are zero
+    # grad = np.zeros(U.shape) #--> |V| x D
+    # grad_target_and_negs = (1. - targetword_and_negwords_sigmoids).dot(V_c.T) #--> N+1 x D
+    # # we negate the grad for the target word as  we found in the formula
+    # grad_target_and_negs[0] *= -1
+    # for idx, global_idx in enumerate(indices):
+    #     grad[global_idx, :] += grad_target_and_negs[idx, :]
+    # grad = grad.reshape(outputVectors_orig_shape)
     ### END YOUR CODE
 
     return cost, gradPred, grad
@@ -235,17 +233,30 @@ def cbow(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     gradOut = np.zeros(outputVectors.shape)
 
     ### YOUR CODE HERE
-    vocab_size = len(tokens)
-    current_word_vec_idx = tokens[currentWord]
-    current_word_vec = inputVectors[current_word_vec_idx]
-    for context_word in contextWords:
-        predicted = tokens[context_word]
-        target = current_word_vec
-        c, grad_pred, grad = word2vecCostAndGradient(predicted, target, outputVectors, dataset)
-        cost = cost + c
-        gradOut = gradOut + grad
-        gradIn[current_word_vec_idx] += np.squeeze(grad_pred)
+    assert 2 * C >= len(contextWords)
+    context_words_indices = [tokens[context_word] for context_word in contextWords]
+    context_words_input_vectors = inputVectors[context_words_indices, :]
+    current_word_idx = tokens[currentWord]
+    current_word_out_vector = outputVectors[current_word_idx]
+    context_words_input_vectors_avg = np.sum(context_words_input_vectors, axis=0) #--> 1 x D
 
+    # STEP 1: accumulate the gradient (well, we accumulate only once)
+    partial_cost, partial_gradIn, partial_gradOut = word2vecCostAndGradient(predicted=context_words_input_vectors_avg,
+                                                                            target=current_word_idx,
+                                                                            outputVectors=outputVectors,
+                                                                            dataset=dataset)
+    # SHAPES:
+    # partial_cost : 1 x 1, scalar
+    # pratial_gradIn : 1 x D --> we update only one row : the current_word_input_vector
+    # partial_gradOut : |V| x D --> we update all output vectors rows; However in the case of negSamplingCostAndGradient,
+    #                               If we knew which words were choosen as negative we could have reduce the size of
+    #                               This partial_gradOut to N+1 x D : where N is the number of negative sample
+    #                               The extra +1 been added to take into account the gradient of the true context outvector
+
+    cost += partial_cost
+    for idx in context_words_indices:
+        gradIn[idx] += partial_gradIn
+    gradOut += partial_gradOut
     ### END YOUR CODE
 
     return cost, gradIn, gradOut
