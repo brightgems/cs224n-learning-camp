@@ -24,6 +24,7 @@ def softmax(x):
     """
 
     ### YOUR CODE HERE
+    out = tf.exp(x) / tf.reduce_sum(tf.exp(x), axis=1)
     ### END YOUR CODE
 
     return out
@@ -54,6 +55,8 @@ def cross_entropy_loss(y, yhat):
     """
 
     ### YOUR CODE HERE
+    out = -tf.reduce_mean(
+        tf.to_float(y) * tf.log(tf.to_float(yhat)), reduction_indices=[1])
     ### END YOUR CODE
 
     return out
@@ -65,18 +68,20 @@ def test_softmax_basic():
     Warning: these are not exhaustive.
     """
 
-    test1 = softmax(tf.constant(np.array([[1001, 1002], [3, 4]]), dtype=tf.float32))
+    test1 = softmax(
+        tf.constant(np.array([[1001, 1002], [3, 4]]), dtype=tf.float32))
     with tf.Session() as sess:
-            test1 = sess.run(test1)
-    test_all_close("Softmax test 1", test1, np.array([[0.26894142, 0.73105858],
-                                                      [0.26894142, 0.73105858]]))
+        test1 = sess.run(test1)
+    test_all_close("Softmax test 1", test1,
+                   np.array([[0.26894142, 0.73105858],
+                             [0.26894142, 0.73105858]]))
 
     test2 = softmax(tf.constant(np.array([[-1001, -1002]]), dtype=tf.float32))
     with tf.Session() as sess:
-            test2 = sess.run(test2)
-    test_all_close("Softmax test 2", test2, np.array([[0.73105858, 0.26894142]]))
-
-    print "Basic (non-exhaustive) softmax tests pass\n"
+        test2 = sess.run(test2)
+    test_all_close("Softmax test 2", test2, np.array([[0.73105858,
+                                                       0.26894142]]))
+    print("Basic (non-exhaustive) softmax tests pass\n")
 
 
 def test_cross_entropy_loss_basic():
@@ -87,13 +92,16 @@ def test_cross_entropy_loss_basic():
     y = np.array([[0, 1], [1, 0], [1, 0]])
     yhat = np.array([[.5, .5], [.5, .5], [.5, .5]])
 
-    test1 = cross_entropy_loss(tf.constant(y, dtype=tf.int32), tf.constant(yhat, dtype=tf.float32))
+    test1 = cross_entropy_loss(
+        tf.constant(y, dtype=tf.int32), tf.constant(yhat, dtype=tf.float32))
     with tf.Session() as sess:
         test1 = sess.run(test1)
     expected = -3 * np.log(.5)
+
     test_all_close("Cross-entropy test 1", test1, expected)
 
-    print "Basic (non-exhaustive) cross-entropy tests pass"
+    print("Basic (non-exhaustive) cross-entropy tests pass")
+
 
 if __name__ == "__main__":
     test_softmax_basic()

@@ -11,6 +11,7 @@ def xavier_weight_init():
 
     Hint: You might find tf.random_uniform useful.
     """
+
     def _xavier_initializer(shape, **kwargs):
         """Defines an initializer for the Xavier distribution.
         Specifically, the output should be sampled uniformly from [-epsilon, epsilon] where
@@ -27,6 +28,7 @@ def xavier_weight_init():
         ### YOUR CODE HERE
         ### END YOUR CODE
         return out
+
     # Returns defined initializer function.
     return _xavier_initializer
 
@@ -34,16 +36,16 @@ def xavier_weight_init():
 def test_initialization_basic():
     """Some simple tests for the initialization.
     """
-    print "Running basic tests..."
+    print("Running basic tests...")
     xavier_initializer = xavier_weight_init()
-    shape = (1,)
+    shape = (1, )
     xavier_mat = xavier_initializer(shape)
     assert xavier_mat.get_shape() == shape
 
     shape = (1, 2, 3)
     xavier_mat = xavier_initializer(shape)
     assert xavier_mat.get_shape() == shape
-    print "Basic (non-exhaustive) Xavier initialization tests pass"
+    print("Basic (non-exhaustive) Xavier initialization tests pass")
 
 
 if __name__ == "__main__":
