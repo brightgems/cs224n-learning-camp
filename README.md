@@ -254,4 +254,4 @@
  3. 课程总结 
 
 ## 最新论文阅读
-https://github.com/thunlp/RCPapers
+[清华大学总结的机器学习论文和数据](https://github.com/thunlp/RCPapers)

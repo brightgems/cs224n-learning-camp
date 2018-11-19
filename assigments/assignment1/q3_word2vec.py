@@ -65,12 +65,13 @@ def softmaxCostAndGradient(predicted, target, outputVectors, dataset):
     score = np.dot(outputVectors, predicted)  # (N, )
     prob = softmax(score)  # (N, )
     cost = - np.log(prob[target])  # 1,
-
+    
     # score (N x 1)= outputVectors (N x D) x predicted (D x 1)
     # doutputVectors = dscore (N x 1) x predicted^T (1 x D)
     dscore = prob - np.eye(num)[target]  # (N, )
     grad = np.outer(dscore, predicted)
     gradPred = np.dot(outputVectors.T, dscore)
+
     ### END YOUR CODE
 
     return cost, gradPred, grad
@@ -163,6 +164,8 @@ def negSamplingCostAndGradient(predicted, target, outputVectors, dataset,
     # we negate the grad for the target word as  we found in the formula
     grad_target_and_negs[0] *= -1
     for idx, global_idx in enumerate(indices):
+
+        
         grad[global_idx, :] += grad_target_and_negs[idx, :]
     grad = grad.reshape(outputVectors_orig_shape)
     ### END YOUR CODE
