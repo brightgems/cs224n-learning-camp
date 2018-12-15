@@ -1,4 +1,10 @@
 {
+<<<<<<< HEAD
     "python.pythonPath": "d:\\Anaconda2\\envs\\py36\\python.exe",
     "python.linting.pylintEnabled": true
+=======
+    "python.pythonPath": "C:\\conda64\\python.exe",
+    "python.linting.enabled": false,
+    "python.formatting.provider": "yapf"
+>>>>>>> 35aa5dbcfd44508a7e1b6022fa0994b99b097ca1
 }

@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 *.zip
 *.pyc
+=======
+*.pyc
+*.xml
+>>>>>>> 35aa5dbcfd44508a7e1b6022fa0994b99b097ca1

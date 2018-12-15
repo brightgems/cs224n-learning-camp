@@ -24,11 +24,15 @@ def softmax(x):
     """
 
     ### YOUR CODE HERE
+<<<<<<< HEAD
     xmax = tf.reduce_max(x, reduction_indices=1, keepdims=True)
     xshift = x - xmax
     xexp = tf.exp(xshift)
     sums = tf.expand_dims(tf.reduce_sum(xexp,reduction_indices=[1]),1)
     out = xexp / sums
+=======
+    out = tf.exp(x) / tf.reduce_sum(tf.exp(x), axis=1)
+>>>>>>> 35aa5dbcfd44508a7e1b6022fa0994b99b097ca1
     ### END YOUR CODE
 
     return out
@@ -59,7 +63,12 @@ def cross_entropy_loss(y, yhat):
     """
 
     ### YOUR CODE HERE
+<<<<<<< HEAD
     out = -tf.reduce_sum( tf.to_float(y) * tf.log(yhat))
+=======
+    out = -tf.reduce_mean(
+        tf.to_float(y) * tf.log(tf.to_float(yhat)), reduction_indices=[1])
+>>>>>>> 35aa5dbcfd44508a7e1b6022fa0994b99b097ca1
     ### END YOUR CODE
 
     return out
