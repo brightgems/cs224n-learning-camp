@@ -11,7 +11,7 @@ from __future__ import division
 import sys
 import time
 import logging
-import StringIO
+from six.moves import StringIO
 from collections import defaultdict, Counter, OrderedDict
 import numpy as np
 from numpy import array, zeros, allclose
@@ -410,7 +410,7 @@ def minibatch(data, minibatch_idx):
 
 def minibatches(data, batch_size, shuffle=True):
     batches = [np.array(col) for col in zip(*data)]
-    return get_minibatches(batches, batch_size, shuffle)
+    return  (batches, batch_size, shuffle)
 
 def print_sentence(output, sentence, labels, predictions):
 

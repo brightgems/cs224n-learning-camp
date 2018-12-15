@@ -179,3 +179,6 @@ def get_chunks(seq, default=LBLS.index(NONE)):
 
 def test_get_chunks():
     assert get_chunks([4, 4, 4, 0, 0, 4, 1, 2, 4, 3], 4) == [(0,3,5), (1, 6, 7), (2, 7, 8), (3,9,10)]
+
+
+print(get_chunks([4, 4, 4, 0, 0, 4, 1, 2, 4, 3], 4) )

@@ -18,7 +18,7 @@ import tensorflow as tf
 from util import print_sentence, write_conll
 from data_util import load_and_preprocess_data, load_embeddings, read_conll, ModelHelper
 from ner_model import NERModel
-from defs import LBLS
+from defs import LBLS, LMAP, NONE
 #from report import Report
 
 logger = logging.getLogger("hw3.q1")
@@ -93,11 +93,20 @@ def make_windowed_data(data, start, end, window_size = 1):
          ...
          ]
     """
-
+    
     windowed_data = []
+    
     for sentence, labels in data:
 		### YOUR CODE HERE (5-20 lines)
-
+        if sentence[0][0] != start:
+            sentence = [start] * window_size  + sentence + [end]*window_size 
+        length = len(sentence)
+    
+        for i in range(window_size, length - window_size):
+            word_vector = []
+            for each in sentence[i-window_size:i+window_size+1]:
+                word_vector.extend(each)
+            windowed_data.append((word_vector,labels[i-window_size]))
 		### END YOUR CODE
     return windowed_data
 
