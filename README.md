@@ -262,3 +262,6 @@ Standford 提供的作业要求使用Python 2.7， 由于我的提交的作业�
 
 ## 最新论文阅读
 [清华大学总结的机器学习论文和数据](https://github.com/thunlp/RCPapers)
+
+## 参考
+https://github.com/rymc9384/DeepNLP_CS224N

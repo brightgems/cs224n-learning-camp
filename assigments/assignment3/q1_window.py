@@ -37,7 +37,7 @@ class Config:
     n_word_features = 2 # Number of features for every word in the input.
     window_size = 1 # The size of the window to use.
     ### YOUR CODE HERE
-    n_window_features = (window_size*2+1)*2 # The total number of features used for each window.
+    n_window_features = (window_size*2+1)*n_word_features # The total number of features used for each window.
     ### END YOUR CODE
     n_classes = 5
     dropout = 0.5
@@ -224,8 +224,8 @@ class WindowModel(NERModel):
         dropout_rate = self.dropout_placeholder
         ### YOUR CODE HERE (~10-20 lines)
         W = tf.get_variable(name='W', shape=(self.config.n_window_features * self.config.embed_size, self.config.hidden_size) \
-                ,initializer=tf.initializers.truncated_normal(0, 0.01))
-        bw = tf.get_variable(name='bw', shape= [self.config.hidden_size],initializer=tf.initializers.truncated_normal(0, 0.01))
+                ,initializer=tf.contrib.layers.xavier_initializer())
+        bw = tf.get_variable(name='bw', shape= [self.config.hidden_size],initializer=tf.contrib.layers.xavier_initializer())
         U = tf.get_variable(name='U', shape = [self.config.hidden_size, self.config.n_classes], \
                             initializer=tf.contrib.layers.xavier_initializer(seed=4))
         bu = tf.get_variable(name='bu', shape = [self.config.n_classes], \
