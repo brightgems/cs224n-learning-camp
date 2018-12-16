@@ -410,7 +410,7 @@ def minibatch(data, minibatch_idx):
 
 def minibatches(data, batch_size, shuffle=True):
     batches = [np.array(col) for col in zip(*data)]
-    return  (batches, batch_size, shuffle)
+    return  get_minibatches(batches, batch_size, shuffle)
 
 def print_sentence(output, sentence, labels, predictions):
 

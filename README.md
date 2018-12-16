@@ -1,5 +1,9 @@
 ﻿# 深度学习之自然语言处理斯坦福大学CS224n课程集训营
 
+
+## 实验环境
+Standford 提供的作业要求使用Python 2.7， 由于我的提交的作业在Window上完成，原始代码已经升级到Python 3.6
+
 ## 课程资料
 1. [课程主页](https://web.stanford.edu/class/cs224n/)  
 2. [中文笔记](http://www.hankcs.com/nlp/cs224n-introduction-to-nlp-and-deep-learning.html)  
