@@ -179,6 +179,14 @@ class RNNModel(NERModel):
             feed_dict: The feed dictionary mapping from placeholders to values.
         """
         ### YOUR CODE (~6-10 lines)
+        # algin size of inputs_batch and mark_batch with batch_size
+        if len(inputs_batch)<self.config.batch_size:
+            diff = self.config.batch_size - len(inputs_batch)
+            inputs_batch = np.vstack([inputs_batch, np.zeros([diff, self.max_length, self.config.n_features])])
+            mask_batch = np.vstack([mask_batch, np.zeros([diff, self.max_length])==1])
+            if labels_batch is not None:
+                labels_batch = np.vstack([labels_batch, np.zeros([diff, self.max_length])])
+            
         feed_dict = {
             self.input_placeholder: inputs_batch,
             self.dropout_placeholder: dropout,
@@ -319,6 +327,7 @@ class RNNModel(NERModel):
         ### YOUR CODE HERE (~2-4 lines)
         # loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=preds,labels=self.labels_placeholder)
         logger.info("pred shape:{}".format(preds.get_shape().as_list()))
+        logger.info("labels shape:{}".format(self.labels_placeholder.get_shape().as_list()))
         loss = tf.losses.sparse_softmax_cross_entropy(self.labels_placeholder,preds, reduction=tf.losses.Reduction.NONE)
         assert loss.get_shape().as_list() ==  [None, self.max_length], "loss are not of right shape. Expected {}, got {}".format([None, self.max_length], loss.get_shape().as_list())
         loss = tf.reduce_mean(tf.boolean_mask(loss,self.mask_placeholder))
