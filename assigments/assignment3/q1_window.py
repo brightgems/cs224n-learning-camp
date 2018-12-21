@@ -276,7 +276,7 @@ class WindowModel(NERModel):
             train_op: The Op for training.
         """
         ### YOUR CODE HERE (~1-2 lines)
-        opt = tf.train.GradientDescentOptimizer(learning_rate=self.config.lr)
+        opt = tf.train.AdamOptimizer(learning_rate=self.config.lr)
         train_op = opt.minimize(loss)
         ### END YOUR CODE
         return train_op
