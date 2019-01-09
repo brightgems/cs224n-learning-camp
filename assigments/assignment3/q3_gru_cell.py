@@ -65,7 +65,30 @@ class GRUCell(tf.nn.rnn_cell.RNNCell):
         # be defined elsewhere!
         with tf.variable_scope(scope):
             ### YOUR CODE HERE (~20-30 lines)
-            pass
+            # ========define variables========
+            W_z = tf.get_variable(name="W_z", shape=(self.input_size, self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            U_z = tf.get_variable(name="U_z", shape=(self.state_size, self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            W_r = tf.get_variable(name="W_r", shape=(self.input_size, self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            U_r = tf.get_variable(name="U_r", shape=(self.state_size, self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            W_o = tf.get_variable(name="W_o", shape=(self.input_size, self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            U_o = tf.get_variable(name="U_o", shape=(self.state_size, self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            
+            b_z = tf.get_variable(name="b_z", shape=(self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            b_r = tf.get_variable(name="b_r", shape=(self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            b_o = tf.get_variable(name="b_o", shape=(self.state_size), initializer=tf.contrib.layers.xavier_initializer())
+            # shape[2*2]
+            z_t = tf.sigmoid(tf.matmul(inputs, W_z) + tf.matmul(state,  U_z) + b_z)
+            r_t = tf.sigmoid(tf.matmul(inputs, W_r) + tf.matmul(state,  U_r) + b_r)
+            # shape[2*2]
+            o_t = tf.tanh(tf.matmul(inputs, W_o) +  r_t * tf.matmul(state,  U_o) + b_o)
+            self.o_t = o_t
+            self.z_t = z_t
+            h_t = z_t * state + (1-z_t) * o_t
+
+            new_state = h_t
+            # ========define operations========
+
+            
             ### END YOUR CODE ###
         # For a GRU, the output and state are the same (N.B. this isn't true
         # for an LSTM, though we aren't using one of those in our
@@ -93,7 +116,7 @@ def test_gru_cell():
             tf.get_variable_scope().reuse_variables()
             cell = GRUCell(3, 2)
             y_var, ht_var = cell(x_placeholder, h_placeholder, scope="gru")
-
+            
             init = tf.global_variables_initializer()
             with tf.Session() as session:
                 session.run(init)
@@ -107,7 +130,7 @@ def test_gru_cell():
                     [ 0.320, 0.555],
                     [-0.006, 0.020]], dtype=np.float32)
                 ht = y
-
+                print(session.run([cell.o_t, cell.z_t], feed_dict={x_placeholder: x, h_placeholder: h}))
                 y_, ht_ = session.run([y_var, ht_var], feed_dict={x_placeholder: x, h_placeholder: h})
                 print("y_ = " + str(y_))
                 print("ht_ = " + str(ht_))

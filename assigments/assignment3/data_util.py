@@ -102,7 +102,7 @@ class ModelHelper(object):
         if not os.path.exists(path):
             os.makedirs(path)
         # Save the tok2id map.
-        with open(os.path.join(path, "features.pkl"), "w") as f:
+        with open(os.path.join(path, "features.pkl"), "wb") as f:
             pickle.dump([self.tok2id, self.max_length], f)
 
     @classmethod
@@ -110,7 +110,7 @@ class ModelHelper(object):
         # Make sure the directory exists.
         assert os.path.exists(path) and os.path.exists(os.path.join(path, "features.pkl"))
         # Save the tok2id map.
-        with open(os.path.join(path, "features.pkl")) as f:
+        with open(os.path.join(path, "features.pkl"),'rb') as f:
             tok2id, max_length = pickle.load(f)
         return cls(tok2id, max_length)
 
@@ -179,3 +179,6 @@ def get_chunks(seq, default=LBLS.index(NONE)):
 
 def test_get_chunks():
     assert get_chunks([4, 4, 4, 0, 0, 4, 1, 2, 4, 3], 4) == [(0,3,5), (1, 6, 7), (2, 7, 8), (3,9,10)]
+
+
+print(get_chunks([4, 4, 4, 0, 0, 4, 1, 2, 4, 3], 4) )

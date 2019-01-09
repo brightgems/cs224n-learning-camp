@@ -87,6 +87,11 @@ class SequencePredictor(Model):
 
         x = self.inputs_placeholder
         ### YOUR CODE HERE (~2-3 lines)
+        outputs, state = tf.nn.dynamic_rnn(cell, self.inputs_placeholder,
+                                   initial_state= cell.zero_state([cell.state_size,cell.state_size], dtype=tf.float32),
+                                   dtype=tf.float32)
+        preds = tf.sigmoid(outputs)
+        
         ### END YOUR CODE
 
         return preds #state # preds
@@ -108,7 +113,7 @@ class SequencePredictor(Model):
         y = self.labels_placeholder
 
         ### YOUR CODE HERE (~1-2 lines)
-
+        loss = tf.reduce_mean(tf.nn.l2_loss(y-preds,name='l2'))
         ### END YOUR CODE
 
         return loss
@@ -142,7 +147,13 @@ class SequencePredictor(Model):
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=self.config.lr)
 
         ### YOUR CODE HERE (~6-10 lines)
-
+        grad = optimizer.compute_gradients(loss)
+        if self.config.clip_gradients:
+            grad,global_norm = tf.clip_by_global_norm(grad,self.config.max_grad_norm)
+            self.global_norm = global_norm
+            self.grad_norm = grad
+        optimizer.apply_gradients(grad)
+        train_op = optimizer.minimize(loss)
         # - Remember to clip gradients only if self.config.clip_gradients
         # is True.
         # - Remember to set self.grad_norm
@@ -260,7 +271,7 @@ def compute_cell_dynamics(args):
 
             tf.get_variable_scope().reuse_variables()
             y_gru, h_gru = GRUCell(1,1)(x_placeholder, h_placeholder, scope="cell")
-            y_rnn, h_rnn = GRUCell(1,1)(x_placeholder, h_placeholder, scope="cell")
+            y_rnn, h_rnn = RNNCell(1,1)(x_placeholder, h_placeholder, scope="cell")
 
             init = tf.global_variables_initializer()
             with tf.Session() as session:

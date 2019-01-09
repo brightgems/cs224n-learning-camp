@@ -98,6 +98,7 @@ class SoftmaxModel(Model):
             pred: A tensor of shape (batch_size, n_classes)
         """
         ### YOUR CODE HERE
+<<<<<<< HEAD
         W = tf.get_variable(
             'W', (self.config.n_features, self.config.n_classes),
             dtype=tf.float32,
@@ -108,6 +109,21 @@ class SoftmaxModel(Model):
             initializer=tf.zeros_initializer())
         s = tf.matmul(self.input_placeholder, W) + b
         pred = softmax(s)
+=======
+        with tf.name_scope('softmax_linear'):
+            W = tf.get_variable(
+                'W', (self.config.n_features, self.config.n_classes),
+                dtype=tf.float32,
+                initializer=tf.zeros_initializer())
+            b = tf.get_variable(
+                'b', (self.config.n_classes),
+                dtype=tf.float32,
+                initializer=tf.zeros_initializer())
+            s = tf.matmul(self.input_placeholder, W) + b
+        pred = softmax(s)
+        self.pred = pred
+        self.s = s
+>>>>>>> master
         ### END YOUR CODE
         return pred
 
@@ -122,7 +138,11 @@ class SoftmaxModel(Model):
             loss: A 0-d tensor (scalar)
         """
         ### YOUR CODE HERE
+<<<<<<< HEAD
         loss = cross_entropy_loss(pred, self.labels_placeholder)
+=======
+        loss = cross_entropy_loss(self.labels_placeholder,pred)
+>>>>>>> master
         ### END YOUR CODE
         return loss
 
@@ -146,7 +166,11 @@ class SoftmaxModel(Model):
             train_op: The Op for training.
         """
         ### YOUR CODE HERE
+<<<<<<< HEAD
         opt = tf.train.GradientDescentOptimizer(learning_rate=0.1)
+=======
+        opt = tf.train.GradientDescentOptimizer(learning_rate=self.config.lr)
+>>>>>>> master
         train_op = opt.minimize(loss)
         ### END YOUR CODE
         return train_op

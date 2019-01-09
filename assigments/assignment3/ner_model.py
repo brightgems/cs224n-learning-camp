@@ -5,7 +5,7 @@ A model for named entity recognition.
 """
 import pdb
 import logging
-
+import util
 import tensorflow as tf
 from util import ConfusionMatrix, Progbar, minibatches
 from data_util import get_chunks
@@ -89,11 +89,11 @@ class NERModel(Model):
             preds_ = self.predict_on_batch(sess, *batch)
             preds += list(preds_)
             prog.update(i + 1, [])
+        preds = preds[:len(inputs_raw)]
         return self.consolidate_predictions(inputs_raw, inputs, preds)
 
     def fit(self, sess, saver, train_examples_raw, dev_set_raw):
         best_score = 0.
-
         train_examples = self.preprocess_sequence_data(train_examples_raw)
         dev_set = self.preprocess_sequence_data(dev_set_raw)
 
@@ -110,7 +110,10 @@ class NERModel(Model):
                         # [features, labels]. This makes expanding tuples into arguments (* operator) handy
 
             ### YOUR CODE HERE (2-3 lines)
-
+            for i,batch in enumerate(minibatches(train_examples, self.config.batch_size)):
+                loss = self.train_on_batch(sess,*batch)
+                prog.update(i + 1, [("train loss", loss)])
+                if self.report: self.report.log_train_loss(loss)
             ### END YOUR CODE
 
             logger.info("Evaluating on development data")
